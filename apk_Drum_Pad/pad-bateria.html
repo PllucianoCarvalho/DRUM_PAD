@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ff2d55">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Pad de Bateria - Paulo</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://via.placeholder.com/180/ff2d55/ffffff?text=PB">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1 {
+            margin: 20px 0 10px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 20px #ff00ff;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 92vmin;
+            max-width: 620px;
+            aspect-ratio: 1 / 1;
+        }
+        .pad {
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6),
+                        inset 0 -10px 20px rgba(255,255,255,0.2);
+            transition: all 0.08s ease;
+            user-select: none;
+        }
+        .pad:active, .pad.playing {
+            transform: scale(0.92);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6),
+                        inset 0 -5px 15px rgba(255,255,255,0.4);
+        }
+        .pad1 { background: #ff2d55; } /* KICK */
+        .pad2 { background: #ff9500; } /* SNARE */
+        .pad3 { background: #ffcc00; } /* CLAP */
+        .pad4 { background: #4cd964; } /* CLOSED HAT */
+        .pad5 { background: #34aadc; } /* OPEN HAT */
+        .pad6 { background: #007aff; } /* TOM */
+        .pad7 { background: #5856d6; } /* CRASH */
+        .pad8 { background: #af52de; } /* RIDE */
+        .pad9 { background: #ff2d92; } /* PERC */
+
+        .info {
+            margin-top: 25px;
+            font-size: 1.1rem;
+            opacity: 0.8;
+            text-align: center;
+            padding: 0 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔥 PAD DE BATERIA</h1>
+    <div class="container">
+        <div class="pad pad1" data-sound="https://s3.amazonaws.com/freecodecamp/drums/RP4_KICK_1.mp3">KICK</div>
+        <div class="pad pad2" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3">SNARE</div>
+        <div class="pad pad3" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Heater-1.mp3">CLAP</div>
+        <div class="pad pad4" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Heater-3.mp3">CLOSED HAT</div>
+        <div class="pad pad5" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Dsc_Oh.mp3">OPEN HAT</div>
+        <div class="pad pad6" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Kick_n_Hat.mp3">TOM</div>
+        <div class="pad pad7" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Heater-6.mp3">CRASH</div>
+        <div class="pad pad8" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Heater-2.mp3">RIDE</div>
+        <div class="pad pad9" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Heater-4_1.mp3">PERC</div>
+    </div>
+    <div class="info">Toque nos pads ou use o teclado: Q W E / A S D / Z X C<br>Adicione à tela inicial pra usar como app!</div>
+
+    <script>
+        const pads = document.querySelectorAll('.pad');
+        
+        function playSound(pad) {
+            const audio = new Audio(pad.dataset.sound);
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log("Erro no áudio:", e));
+            
+            pad.classList.add('playing');
+            setTimeout(() => pad.classList.remove('playing'), 150);
+        }
+
+        // Toque / Clique
+        pads.forEach(pad => {
+            pad.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                playSound(pad);
+            });
+        });
+
+        // Teclado (Q W E A S D Z X C)
+        const keyMap = {
+            'Q': 0, 'W': 1, 'E': 2,
+            'A': 3, 'S': 4, 'D': 5,
+            'Z': 6, 'X': 7, 'C': 8
+        };
+
+        document.addEventListener('keydown', e => {
+            if (e.repeat) return; // evita repetir som ao segurar tecla
+            const key = e.key.toUpperCase();
+            if (keyMap[key] !== undefined) {
+                playSound(pads[keyMap[key]]);
+            }
+        });
+
+        // Registrar Service Worker para PWA (offline + install)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrado com sucesso!', reg))
+                    .catch(err => console.log('Falha ao registrar Service Worker:', err));
+            });
+        }
+    </script>
+</body>
+</html>
