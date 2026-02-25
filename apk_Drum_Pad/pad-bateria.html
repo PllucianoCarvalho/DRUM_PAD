@@ -32,8 +32,11 @@
         .container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            width: 92vmin;
+            /* smaller gap to fit tightly on mobile screens */
+            gap: 3px;
+            /* make the grid fill the available viewport space
+               while remaining square and not exceeding the design max */
+            width: 100vmin;            
             max-width: 620px;
             aspect-ratio: 1 / 1;
         }
@@ -56,15 +59,9 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.6),
                         inset 0 -5px 15px rgba(255,255,255,0.4);
         }
-        .pad1 { background: #ff2d55; } /* KICK */
-        .pad2 { background: #ff9500; } /* SNARE */
-        .pad3 { background: #ffcc00; } /* CLAP */
-        .pad4 { background: #4cd964; } /* CLOSED HAT */
-        .pad5 { background: #34aadc; } /* OPEN HAT */
-        .pad6 { background: #007aff; } /* TOM */
-        .pad7 { background: #5856d6; } /* CRASH */
-        .pad8 { background: #af52de; } /* RIDE */
-        .pad9 { background: #ff2d92; } /* PERC */
+        .pad1, .pad2, .pad3 { background: #ff2d55; } /* first row same tone (red) */
+        .pad4, .pad5, .pad6 { background: #ff9500; } /* second row same tone (orange) */
+        .pad7, .pad8, .pad9 { background: #ffcc00; } /* third row same tone (yellow) */
 
         .info {
             margin-top: 25px;
