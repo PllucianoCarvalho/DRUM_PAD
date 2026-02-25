@@ -60,8 +60,8 @@
                         inset 0 -5px 15px rgba(255,255,255,0.4);
         }
         .pad1, .pad2, .pad3 { background: #ff2d55; } /* first row same tone (red) */
-        .pad4, .pad5, .pad6 { background: #ff9500; } /* second row same tone (orange) */
-        .pad7, .pad8, .pad9 { background: #ffcc00; } /* third row same tone (yellow) */
+        .pad4, .pad5, .pad6 { background: #00ff15; } /* second row same tone (orange) */
+        .pad7, .pad8, .pad9 { background: #00c3ff; } /* third row same tone (yellow) */
 
         .info {
             margin-top: 25px;
@@ -74,6 +74,10 @@
 </head>
 <body>
     <h1>Drum Pad</h1>
+    <!-- button to select a directory with numbered audio files (1.mp3, 2.wav, etc.) -->
+    <button id="loadLocal" style="margin-bottom:15px;padding:10px 20px;font-size:1rem;">Carregar sons</button>
+    <!-- hidden file input used for directory selection -->
+    <input id="folderPicker" type="file" webkitdirectory directory multiple style="display:none">
     <div class="container">
         <div class="pad pad1" data-sound="https://s3.amazonaws.com/freecodecamp/drums/RP4_KICK_1.mp3">KICK</div>
         <div class="pad pad2" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3">SNARE</div>
@@ -84,6 +88,9 @@
         <div class="pad pad7" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Heater-6.mp3">CRASH</div>
         <div class="pad pad8" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Heater-2.mp3">RIDE</div>
         <div class="pad pad9" data-sound="https://s3.amazonaws.com/freecodecamp/drums/Heater-4_1.mp3">PERC</div>
+    </div>
+    <div class="info">
+        Coloque arquivos de áudio em uma pasta do celular nomeados de <code>1</code> até <code>9</code> (extensão .mp3, .wav, etc.) e use "Carregar sons" para apontar a pasta. Cada número corresponde ao pad na mesma posição (1 = canto superior esquerdo, 9 = canto inferior direito).
     </div>
     
     <script>
@@ -119,6 +126,26 @@
             if (keyMap[key] !== undefined) {
                 playSound(pads[keyMap[key]]);
             }
+        });
+
+        // carregar sons de uma pasta selecionada pelo usuário
+        const folderPicker = document.getElementById('folderPicker');
+        const loadLocal = document.getElementById('loadLocal');
+
+        loadLocal.addEventListener('click', () => {
+            folderPicker.click();
+        });
+
+        folderPicker.addEventListener('change', e => {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                // nome sem extensão, esperamos "1", "2" ...
+                const base = file.name.replace(/\.[^/.]+$/, '');
+                const idx = parseInt(base, 10) - 1;
+                if (!isNaN(idx) && idx >= 0 && idx < pads.length) {
+                    pads[idx].dataset.sound = URL.createObjectURL(file);
+                }
+            });
         });
 
         // Registrar Service Worker para PWA (offline + install)
